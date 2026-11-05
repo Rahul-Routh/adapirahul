@@ -1,24 +1,34 @@
 package com.rahul.adapirahul.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class ApiResponse {
-    private boolean success;
+
+    @JsonProperty("status_code")
+    private String statusCode;
+
     private String message;
-    private UserProfileResponse user;
 
     public ApiResponse() {}
 
-    public ApiResponse(boolean success, String message) {
-        this.success = success;
+    public ApiResponse(String statusCode, String message) {
+        this.statusCode = statusCode;
         this.message = message;
     }
 
-    public ApiResponse(boolean success, String message, UserProfileResponse user) {
-        this.success = success;
-        this.message = message;
-        this.user = user;
+    public String getStatusCode() {
+        return statusCode;
     }
 
-    public boolean isSuccess() { return success; }
-    public String getMessage() { return message; }
-    public UserProfileResponse getUser() { return user; }
+    public void setStatusCode(String statusCode) {
+        this.statusCode = statusCode;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
 }

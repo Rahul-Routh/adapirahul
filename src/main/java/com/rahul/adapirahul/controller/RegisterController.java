@@ -18,10 +18,10 @@ public class RegisterController {
     @PostMapping("/register")
     public ResponseEntity<ApiResponse> register(@RequestBody RegisterRequest req) {
         if (req.getEmail() == null || req.getPassword() == null) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, "Email and password are required"));
+            return ResponseEntity.badRequest().body(new ApiResponse("400", "Email and password are required"));
         }
         if (userRepository.existsByEmail(req.getEmail())) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, "Email already registered"));
+            return ResponseEntity.badRequest().body(new ApiResponse("400", "Email already registered"));
         }
 
         User user = new User(
@@ -35,6 +35,6 @@ public class RegisterController {
         );
         userRepository.save(user);
 
-        return ResponseEntity.ok(new ApiResponse(true, "Registration successful"));
+        return ResponseEntity.ok(new ApiResponse("200", "Registration successful"));
     }
 }
