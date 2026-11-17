@@ -4,8 +4,8 @@ import com.rahul.adapirahul.User;
 import com.rahul.adapirahul.UserRepository;
 import com.rahul.adapirahul.dto.LoginRequest;
 import com.rahul.adapirahul.dto.LoginResponse;
-import com.rahul.adapirahul.dto.UserProfileResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,26 +19,27 @@ public class LoginController {
     private UserRepository userRepository;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest req) {
-        Optional<User> userOptional = userRepository.findByEmail(req.getEmail());
-
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            if (user.getPassword().equals(req.getPassword())) {
-                UserProfileResponse profile = new UserProfileResponse(
-                        user.getId(),
-                        user.getEmail(),
-                        user.getName(),
-                        user.getAge(),
-                        user.getGender(),
-                        user.getDob(),
-                        user.getState()
-                        user.get
-                );
-                return ResponseEntity.ok(new LoginResponse("200", "Login successful", profile));
-            }
+    public ResponseEntity<LoginResponse> loginUser(@RequestBody LoginRequest request) {
+        if (request.getEmail() == null || request.getEmail().isBlank() ||
+                request.getPassword() == null || request.getPassword().isBlank()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new LoginResponse("400", "Email and password are required", null));
         }
 
-        return ResponseEntity.status(401).body(new LoginResponse("401", "Invalid email or password"));
+        Optional<User> optionalUser = userRepository.findByEmail(request.getEmail());
+
+        if (optionalUser.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new LoginResponse("401", "Invalid email or password", null));
+        }
+
+        User user = optionalUser.get();
+
+        if (!user.getPassword().equals(request.getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new LoginResponse("401", "Invalid email or password", null));
+        }
+
+        return ResponseEntity.ok(new LoginResponse("200", "Login successful", user));
     }
 }
