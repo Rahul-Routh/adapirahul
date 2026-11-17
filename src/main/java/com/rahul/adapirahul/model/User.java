@@ -26,7 +26,8 @@ public class User {
 
     public User() {}
 
-    public User(String email, String password, String name, Integer age, String gender, String dob, String state) {
+    public User(String email, String password, String name, Integer age,
+                String gender, String dob, String state, String profileImage) {
         this.email = email;
         this.password = password;
         this.name = name;
@@ -34,6 +35,7 @@ public class User {
         this.gender = gender;
         this.dob = dob;
         this.state = state;
+        this.profileImage = profileImage;
     }
 
     // Getters and Setters

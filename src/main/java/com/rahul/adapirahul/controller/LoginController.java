@@ -33,6 +33,7 @@ public class LoginController {
                         user.getGender(),
                         user.getDob(),
                         user.getState()
+                        user.get
                 );
                 return ResponseEntity.ok(new LoginResponse("200", "Login successful", profile));
             }
