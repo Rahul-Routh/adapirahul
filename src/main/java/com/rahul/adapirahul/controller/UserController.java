@@ -5,6 +5,7 @@ import com.rahul.adapirahul.UserRepository;
 import com.rahul.adapirahul.dto.ApiResponse;
 import com.rahul.adapirahul.dto.ProfileImageRequest;
 import com.rahul.adapirahul.dto.UserListResponse;
+import com.rahul.adapirahul.service.ImageStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,9 @@ public class UserController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ImageStorageService imageStorageService;
 
     @GetMapping("/health")
     public ResponseEntity<String> healthCheck() {
@@ -50,10 +54,22 @@ public class UserController {
                     .body(new ApiResponse("404", "User not found"));
         }
 
-        User user = optionalUser.get();
-        user.setProfileImage(request.getProfileImage());
-        userRepository.save(user);
+        try {
+            // Save image on Render server and get https://adapirahul.onrender.com/uploads/... URL
+            String imageUrl = imageStorageService.saveBase64Image(request.getUserId(), request.getProfileImage());
 
-        return ResponseEntity.ok(new ApiResponse("200", "Profile image updated successfully"));
+            // Save URL in database
+            User user = optionalUser.get();
+            user.setProfileImage(imageUrl);
+            userRepository.save(user);
+
+            return ResponseEntity.ok(new ApiResponse("200", "Profile image updated successfully"));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse("400", "Invalid Base64 image format"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse("500", "Failed to save image: " + e.getMessage()));
+        }
     }
 }
