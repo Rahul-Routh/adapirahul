@@ -18,6 +18,11 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
+    @GetMapping("/health")
+    public ResponseEntity<String> healthCheck() {
+        return ResponseEntity.ok("OK");
+    }
+
     @GetMapping("/users")
     public ResponseEntity<UserListResponse> getAllUsers() {
         List<User> users = userRepository.findAll();
