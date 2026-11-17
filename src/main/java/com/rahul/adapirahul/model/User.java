@@ -1,5 +1,7 @@
 package com.rahul.adapirahul;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 @Entity
@@ -12,6 +14,7 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
 
+    @JsonIgnore // Keeps password hidden in login/users JSON responses
     @Column(nullable = false)
     private String password;
 
@@ -21,10 +24,17 @@ public class User {
     private String dob;
     private String state;
 
+    @JsonProperty("profile_image")
     @Column(name = "profile_image", columnDefinition = "TEXT")
     private String profileImage;
 
     public User() {}
+
+    // Used during registration (profileImage defaults to null)
+    public User(String email, String password, String name, Integer age,
+                String gender, String dob, String state) {
+        this(email, password, name, age, gender, dob, state, null);
+    }
 
     public User(String email, String password, String name, Integer age,
                 String gender, String dob, String state, String profileImage) {
