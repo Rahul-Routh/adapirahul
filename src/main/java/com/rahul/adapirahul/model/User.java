@@ -21,6 +21,9 @@ public class User {
     private String dob;
     private String state;
 
+    @Column(name = "profile_image", columnDefinition = "TEXT")
+    private String profileImage;
+
     public User() {}
 
     public User(String email, String password, String name, Integer age, String gender, String dob, String state) {
@@ -49,4 +52,6 @@ public class User {
     public void setDob(String dob) { this.dob = dob; }
     public String getState() { return state; }
     public void setState(String state) { this.state = state; }
+    public String getProfileImage() { return profileImage; }
+    public void setProfileImage(String profileImage) { this.profileImage = profileImage; }
 }
